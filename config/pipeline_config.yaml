@@ -1,0 +1,54 @@
+# Pipeline Configuration (Spark + HF, single document)
+
+# Observation years inside the 2006 10-K selected data table
+target_years:
+  - 2002
+  - 2003
+  - 2004
+  - 2005
+  - 2006
+
+# Data paths
+paths:
+  ground_truth: "data/ground_truth_2006_doc.json"
+  results_json: "results/extraction_results.json"
+  results_csv: "results/extraction_results.csv"
+
+# LLM Configuration
+llm:
+  provider: "groq"
+  model: "llama-3.1-8b-instant"
+  temperature: 0
+  max_tokens: 300
+
+# Rate limiting (for Groq free tier)
+rate_limits:
+  max_retries: 3
+  retry_delay_seconds: 5
+  call_delay_seconds: 10
+  rate_limit_wait_seconds: 60
+
+# Retrieval settings
+retrieval:
+  top_k: 5
+  chunks_per_extraction: 2
+
+# Variable-specific retrieval queries
+variable_queries:
+  fas133_fas52_amounts_included:
+    - "amounts included FAS 133 FAS 52 For 2006, 2005, 2004, 2003 and 2002"
+    - "amounts included are $355 million $(495) million $(140) million $78 million $(91) million"
+    - "hedging activities did not qualify for hedge accounting FAS 133 FAS 52 amounts included"
+  capital_markets_hedging_effect:
+    - "Capital Markets effect was in both revenues and operating income"
+    - "For 2006, 2005, 2004, 2003 and 2002, respectively, the effect was in both revenues and operating income for Capital Markets"
+    - "hedging activities effect was in both revenues and operating income for Capital Markets"
+  business_segments:
+    - "reportable segments principal business units"
+    - "AIG identifies its reportable segments"
+    - "General Insurance Life Insurance Financial Services Asset Management"
+
+# Comparison settings
+comparison:
+  numeric_tolerance: 0.01
+  categorical_threshold: 0.5

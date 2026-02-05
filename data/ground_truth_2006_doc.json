@@ -1,0 +1,126 @@
+{
+  "metadata": {
+    "source": "Hugging Face: eloukas/edgar-corpus (year_2006)",
+    "company": "AIG",
+    "filing_type": "10-K",
+    "doc_year": 2006,
+    "notes": "Populate values from the 2006 10-K (single document). Years 2002-2006 are observation labels taken from the Selected Consolidated Financial Data table."
+  },
+  "ground_truth": [
+    {
+      "year": 2002,
+      "filing_date": null,
+      "variables": {
+        "fas133_fas52_amounts_included": {
+          "value": -91,
+          "source_chunk_ids": []
+        },
+        "capital_markets_hedging_effect": {
+          "value": 220,
+          "source_chunk_ids": []
+        },
+        "business_segments": {
+          "value": [
+            "General Insurance",
+            "Life Insurance & Retirement Services",
+            "Financial Services",
+            "Asset Management"
+          ],
+          "source_chunk_ids": []
+        }
+      }
+    },
+    {
+      "year": 2003,
+      "filing_date": null,
+      "variables": {
+        "fas133_fas52_amounts_included": {
+          "value": 78,
+          "source_chunk_ids": []
+        },
+        "capital_markets_hedging_effect": {
+          "value": -1010,
+          "source_chunk_ids": []
+        },
+        "business_segments": {
+          "value": [
+            "General Insurance",
+            "Life Insurance & Retirement Services",
+            "Financial Services",
+            "Asset Management"
+          ],
+          "source_chunk_ids": []
+        }
+      }
+    },
+    {
+      "year": 2004,
+      "filing_date": null,
+      "variables": {
+        "fas133_fas52_amounts_included": {
+          "value": -140,
+          "source_chunk_ids": []
+        },
+        "capital_markets_hedging_effect": {
+          "value": -122,
+          "source_chunk_ids": []
+        },
+        "business_segments": {
+          "value": [
+            "General Insurance",
+            "Life Insurance & Retirement Services",
+            "Financial Services",
+            "Asset Management"
+          ],
+          "source_chunk_ids": []
+        }
+      }
+    },
+    {
+      "year": 2005,
+      "filing_date": null,
+      "variables": {
+        "fas133_fas52_amounts_included": {
+          "value": -495,
+          "source_chunk_ids": []
+        },
+        "capital_markets_hedging_effect": {
+          "value": 2010,
+          "source_chunk_ids": []
+        },
+        "business_segments": {
+          "value": [
+            "General Insurance",
+            "Life Insurance & Retirement Services",
+            "Financial Services",
+            "Asset Management"
+          ],
+          "source_chunk_ids": []
+        }
+      }
+    },
+    {
+      "year": 2006,
+      "filing_date": null,
+      "variables": {
+        "fas133_fas52_amounts_included": {
+          "value": 355,
+          "source_chunk_ids": []
+        },
+        "capital_markets_hedging_effect": {
+          "value": -1820,
+          "source_chunk_ids": []
+        },
+        "business_segments": {
+          "value": [
+            "General Insurance",
+            "Life Insurance & Retirement Services",
+            "Financial Services",
+            "Asset Management"
+          ],
+          "source_chunk_ids": []
+        }
+      }
+    }
+  ]
+}

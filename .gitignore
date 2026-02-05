@@ -1,0 +1,38 @@
+# Virtual environment
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Environment variables
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# HuggingFace cache (large files)
+data/hf_cache/
+
+# Raw data files (large)
+data/raw/
+
+# Pickle cache
+*.pkl
+
+# Spark
+spark-warehouse/
+metastore_db/
+derby.log
+
+# Assignment PDF (private)
+*.pdf
