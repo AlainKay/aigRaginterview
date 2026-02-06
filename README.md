@@ -26,7 +26,7 @@ Single-document RAG pipeline for the AIG 2006 10-K using **PySpark** and the Hug
 ```
 ragGroundTruth/
 ├── config/
-│   └── pipeline_config.yaml    # All configurable settings
+│   └── rag_config.yaml           # All configurable settings
 ├── data/
 │   ├── ground_truth_2006_doc.json  # Manual ground truth (15 observations)
 │   └── hf_cache/               # HuggingFace + pickle cache

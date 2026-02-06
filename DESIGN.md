@@ -82,7 +82,7 @@ Each year has the numeric value in **millions** and a categorical list for `busi
 - `src/spark_preprocess_hf.py`: HF loading + chunking
 - `src/spark_retriever.py`: TF‑IDF retrieval
 - `src/llm_extractor.py`: prompts + LLM calls
-- `config/pipeline_config.yaml`: queries, model, thresholds
+- `config/rag_config.yaml`: queries, model, thresholds
 - `data/ground_truth_2006_doc.json`: ground truth
 
 ## Why Single‑Document

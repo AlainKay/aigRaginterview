@@ -1,15 +1,15 @@
 {
   "pipeline_run": {
-    "timestamp": "2026-02-05T15:25:09.453626",
-    "years_processed": [
+    "timestamp": "2026-02-05T20:17:19.022729",
+    "years": [
       2002,
       2003,
       2004,
       2005,
       2006
     ],
-    "total_comparisons": 15,
-    "total_matches": 15,
+    "total": 15,
+    "matches": 15,
     "accuracy": 1.0
   },
   "results_by_year": [
@@ -23,35 +23,30 @@
             "Financial Services",
             "Asset Management"
           ],
-          "confidence": "high",
-          "source_text": "[Chunk 1] The principal business units in each of AIG\u2019s segments are as follows*:\nGeneral Insurance\nLife Insurance & Retirement Services\nFinancial Services\nAsset Management",
-          "variable": "Business Segments",
+          "source_text": "Part 1: American International Group, Inc. (AIG), a Delaware corporation, is a holding company which, through its subsidiaries, is engaged in a broad range of insurance and insurance-related activities in the United States and abroad. AIG\u2019s primary activities include both General Insurance and Life Insurance & Retirement Services operations. Other significant activities include Financial Services and Asset Management.",
           "year": 2002,
-          "source_chunk_ids": [
+          "tag": "segments",
+          "ids": [
             16,
             1
           ]
         },
         "fas133_fas52_amounts_included": {
           "value": -91,
-          "confidence": "high",
           "source_text": "For 2006, 2005, 2004, 2003 and 2002, respectively, the amounts included are $355 million, $(495) million, $(140) million, $78 million and $(91) million.",
-          "variable": "FAS133/FAS52 Amounts Included",
           "year": 2002,
-          "unit": "millions USD",
-          "source_chunk_ids": [
+          "tag": "fas",
+          "ids": [
             5,
             357
           ]
         },
         "capital_markets_hedging_effect": {
           "value": 220,
-          "confidence": "high",
-          "source_text": "For 2006, 2005, 2004, 2003 and 2002, respectively, the effect was $220 million in both revenues and operating income for Capital Markets.",
-          "variable": "Capital Markets Hedging Effect",
+          "source_text": "the effect was $(1.82) billion, $2.01 billion, $(122) million, $(1.01) billion and $220 million in both revenues and operating income for Capital Markets.",
           "year": 2002,
-          "unit": "millions USD",
-          "source_chunk_ids": [
+          "tag": "hedging",
+          "ids": [
             5,
             77
           ]
@@ -62,22 +57,12 @@
           "match": true,
           "extracted": -91.0,
           "ground_truth": -91.0,
-          "extracted_source_chunks": [
-            5,
-            357
-          ],
-          "gt_source_chunks": [],
           "relative_error": 0.0
         },
         "capital_markets_hedging_effect": {
           "match": true,
           "extracted": 220.0,
           "ground_truth": 220.0,
-          "extracted_source_chunks": [
-            5,
-            77
-          ],
-          "gt_source_chunks": [],
           "relative_error": 0.0
         },
         "business_segments": {
@@ -94,17 +79,12 @@
             "Financial Services",
             "Asset Management"
           ],
-          "extracted_source_chunks": [
-            16,
-            1
-          ],
-          "gt_source_chunks": [],
-          "jaccard_similarity": 1.0,
-          "common_segments": [
-            "asset management",
-            "general insurance",
+          "jaccard": 1.0,
+          "common": [
             "life insurance & retirement services",
-            "financial services"
+            "general insurance",
+            "financial services",
+            "asset management"
           ]
         }
       }
@@ -119,35 +99,30 @@
             "Financial Services",
             "Asset Management"
           ],
-          "confidence": "high",
-          "source_text": "[Chunk 1] The principal business units in each of AIG\u2019s segments are as follows*:\nGeneral Insurance\nLife Insurance & Retirement Services\nFinancial Services\nAsset Management",
-          "variable": "Business Segments",
+          "source_text": "Part 1: American International Group, Inc. (AIG), a Delaware corporation, is a holding company which, through its subsidiaries, is engaged in a broad range of insurance and insurance-related activities in the United States and abroad. AIG\u2019s primary activities include both General Insurance and Life Insurance & Retirement Services operations. Other significant activities include Financial Services and Asset Management.",
           "year": 2003,
-          "source_chunk_ids": [
+          "tag": "segments",
+          "ids": [
             16,
             1
           ]
         },
         "fas133_fas52_amounts_included": {
           "value": 78,
-          "confidence": "high",
           "source_text": "For 2006, 2005, 2004, 2003 and 2002, respectively, the amounts included are $355 million, $(495) million, $(140) million, $78 million and $(91) million.",
-          "variable": "FAS133/FAS52 Amounts Included",
           "year": 2003,
-          "unit": "millions USD",
-          "source_chunk_ids": [
+          "tag": "fas",
+          "ids": [
             5,
             357
           ]
         },
         "capital_markets_hedging_effect": {
           "value": -1010,
-          "confidence": "high",
-          "source_text": "For 2006, 2005, 2004, 2003 and 2002, respectively, the effect was $(1.01) billion",
-          "variable": "Capital Markets Hedging Effect",
+          "source_text": "For 2006, 2005, 2004, 2003 and 2002, respectively, the effect was $(1.82) billion, $2.01 billion, $(122) million, $(1.01) billion and $220 million in both revenues and operating income for Capital Markets.",
           "year": 2003,
-          "unit": "millions USD",
-          "source_chunk_ids": [
+          "tag": "hedging",
+          "ids": [
             5,
             77
           ]
@@ -158,22 +133,12 @@
           "match": true,
           "extracted": 78.0,
           "ground_truth": 78.0,
-          "extracted_source_chunks": [
-            5,
-            357
-          ],
-          "gt_source_chunks": [],
           "relative_error": 0.0
         },
         "capital_markets_hedging_effect": {
           "match": true,
           "extracted": -1010.0,
           "ground_truth": -1010.0,
-          "extracted_source_chunks": [
-            5,
-            77
-          ],
-          "gt_source_chunks": [],
           "relative_error": 0.0
         },
         "business_segments": {
@@ -190,17 +155,12 @@
             "Financial Services",
             "Asset Management"
           ],
-          "extracted_source_chunks": [
-            16,
-            1
-          ],
-          "gt_source_chunks": [],
-          "jaccard_similarity": 1.0,
-          "common_segments": [
-            "asset management",
-            "general insurance",
+          "jaccard": 1.0,
+          "common": [
             "life insurance & retirement services",
-            "financial services"
+            "general insurance",
+            "financial services",
+            "asset management"
           ]
         }
       }
@@ -215,35 +175,30 @@
             "Financial Services",
             "Asset Management"
           ],
-          "confidence": "high",
-          "source_text": "[Chunk 1] The principal business units in each of AIG\u2019s segments are as follows*:\nGeneral Insurance\nLife Insurance & Retirement Services\nFinancial Services\nAsset Management",
-          "variable": "Business Segments",
+          "source_text": "Part 1: American International Group, Inc. (AIG), a Delaware corporation, is a holding company which, through its subsidiaries, is engaged in a broad range of insurance and insurance-related activities in the United States and abroad. AIG\u2019s primary activities include both General Insurance and Life Insurance & Retirement Services operations. Other significant activities include Financial Services and Asset Management.",
           "year": 2004,
-          "source_chunk_ids": [
+          "tag": "segments",
+          "ids": [
             16,
             1
           ]
         },
         "fas133_fas52_amounts_included": {
           "value": -140,
-          "confidence": "high",
           "source_text": "For 2006, 2005, 2004, 2003 and 2002, respectively, the amounts included are $355 million, $(495) million, $(140) million, $78 million and $(91) million.",
-          "variable": "FAS133/FAS52 Amounts Included",
           "year": 2004,
-          "unit": "millions USD",
-          "source_chunk_ids": [
+          "tag": "fas",
+          "ids": [
             5,
             357
           ]
         },
         "capital_markets_hedging_effect": {
           "value": -122,
-          "confidence": "high",
-          "source_text": "For 2006, 2005, 2004, 2003 and 2002, respectively, the effect was $(122) million, $(1.01) billion and $220 million in both revenues and operating income for Capital Markets.",
-          "variable": "Capital Markets Hedging Effect",
+          "source_text": "For 2006, 2005, 2004, 2003 and 2002, respectively, the effect was $(1.82) billion, $2.01 billion, $(122) million, $(1.01) billion and $220 million in both revenues and operating income for Capital Markets.",
           "year": 2004,
-          "unit": "millions USD",
-          "source_chunk_ids": [
+          "tag": "hedging",
+          "ids": [
             5,
             77
           ]
@@ -254,22 +209,12 @@
           "match": true,
           "extracted": -140.0,
           "ground_truth": -140.0,
-          "extracted_source_chunks": [
-            5,
-            357
-          ],
-          "gt_source_chunks": [],
           "relative_error": 0.0
         },
         "capital_markets_hedging_effect": {
           "match": true,
           "extracted": -122.0,
           "ground_truth": -122.0,
-          "extracted_source_chunks": [
-            5,
-            77
-          ],
-          "gt_source_chunks": [],
           "relative_error": 0.0
         },
         "business_segments": {
@@ -286,17 +231,12 @@
             "Financial Services",
             "Asset Management"
           ],
-          "extracted_source_chunks": [
-            16,
-            1
-          ],
-          "gt_source_chunks": [],
-          "jaccard_similarity": 1.0,
-          "common_segments": [
-            "asset management",
-            "general insurance",
+          "jaccard": 1.0,
+          "common": [
             "life insurance & retirement services",
-            "financial services"
+            "general insurance",
+            "financial services",
+            "asset management"
           ]
         }
       }
@@ -311,35 +251,30 @@
             "Financial Services",
             "Asset Management"
           ],
-          "confidence": "high",
-          "source_text": "[Chunk 1] The principal business units in each of AIG\u2019s segments are as follows*:\nGeneral Insurance\nLife Insurance & Retirement Services\nFinancial Services\nAsset Management",
-          "variable": "Business Segments",
+          "source_text": "Part 1: American International Group, Inc. (AIG), a Delaware corporation, is a holding company which, through its subsidiaries, is engaged in a broad range of insurance and insurance-related activities in the United States and abroad. AIG\u2019s primary activities include both General Insurance and Life Insurance & Retirement Services operations. Other significant activities include Financial Services and Asset Management.",
           "year": 2005,
-          "source_chunk_ids": [
+          "tag": "segments",
+          "ids": [
             16,
             1
           ]
         },
         "fas133_fas52_amounts_included": {
           "value": -495,
-          "confidence": "high",
           "source_text": "For 2006, 2005, 2004, 2003 and 2002, respectively, the amounts included are $355 million, $(495) million, $(140) million, $78 million and $(91) million.",
-          "variable": "FAS133/FAS52 Amounts Included",
           "year": 2005,
-          "unit": "millions USD",
-          "source_chunk_ids": [
+          "tag": "fas",
+          "ids": [
             5,
             357
           ]
         },
         "capital_markets_hedging_effect": {
-          "value": 2001,
-          "confidence": "high",
+          "value": 2010,
           "source_text": "For 2006, 2005, 2004, 2003 and 2002, respectively, the effect was $(1.82) billion, $2.01 billion, $(122) million, $(1.01) billion and $220 million in both revenues and operating income for Capital Markets.",
-          "variable": "Capital Markets Hedging Effect",
           "year": 2005,
-          "unit": "millions USD",
-          "source_chunk_ids": [
+          "tag": "hedging",
+          "ids": [
             5,
             77
           ]
@@ -350,23 +285,13 @@
           "match": true,
           "extracted": -495.0,
           "ground_truth": -495.0,
-          "extracted_source_chunks": [
-            5,
-            357
-          ],
-          "gt_source_chunks": [],
           "relative_error": 0.0
         },
         "capital_markets_hedging_effect": {
           "match": true,
-          "extracted": 2001.0,
+          "extracted": 2010.0,
           "ground_truth": 2010.0,
-          "extracted_source_chunks": [
-            5,
-            77
-          ],
-          "gt_source_chunks": [],
-          "relative_error": 0.004477611940298508
+          "relative_error": 0.0
         },
         "business_segments": {
           "match": true,
@@ -382,17 +307,12 @@
             "Financial Services",
             "Asset Management"
           ],
-          "extracted_source_chunks": [
-            16,
-            1
-          ],
-          "gt_source_chunks": [],
-          "jaccard_similarity": 1.0,
-          "common_segments": [
-            "asset management",
-            "general insurance",
+          "jaccard": 1.0,
+          "common": [
             "life insurance & retirement services",
-            "financial services"
+            "general insurance",
+            "financial services",
+            "asset management"
           ]
         }
       }
@@ -407,35 +327,30 @@
             "Financial Services",
             "Asset Management"
           ],
-          "confidence": "high",
-          "source_text": "[Chunk 1] The principal business units in each of AIG\u2019s segments are as follows*:\nGeneral Insurance\nLife Insurance & Retirement Services\nFinancial Services\nAsset Management",
-          "variable": "Business Segments",
+          "source_text": "Part 1: American International Group, Inc. (AIG), a Delaware corporation, is a holding company which, through its subsidiaries, is engaged in a broad range of insurance and insurance-related activities in the United States and abroad. AIG\u2019s primary activities include both General Insurance and Life Insurance & Retirement Services operations. Other significant activities include Financial Services and Asset Management.",
           "year": 2006,
-          "source_chunk_ids": [
+          "tag": "segments",
+          "ids": [
             16,
             1
           ]
         },
         "fas133_fas52_amounts_included": {
           "value": 355,
-          "confidence": "high",
           "source_text": "For 2006, 2005, 2004, 2003 and 2002, respectively, the amounts included are $355 million, $(495) million, $(140) million, $78 million and $(91) million.",
-          "variable": "FAS133/FAS52 Amounts Included",
           "year": 2006,
-          "unit": "millions USD",
-          "source_chunk_ids": [
+          "tag": "fas",
+          "ids": [
             5,
             357
           ]
         },
         "capital_markets_hedging_effect": {
           "value": -1820,
-          "confidence": "high",
           "source_text": "For 2006, 2005, 2004, 2003 and 2002, respectively, the effect was $(1.82) billion, $2.01 billion, $(122) million, $(1.01) billion and $220 million in both revenues and operating income for Capital Markets.",
-          "variable": "Capital Markets Hedging Effect",
           "year": 2006,
-          "unit": "millions USD",
-          "source_chunk_ids": [
+          "tag": "hedging",
+          "ids": [
             5,
             77
           ]
@@ -446,22 +361,12 @@
           "match": true,
           "extracted": 355.0,
           "ground_truth": 355.0,
-          "extracted_source_chunks": [
-            5,
-            357
-          ],
-          "gt_source_chunks": [],
           "relative_error": 0.0
         },
         "capital_markets_hedging_effect": {
           "match": true,
           "extracted": -1820.0,
           "ground_truth": -1820.0,
-          "extracted_source_chunks": [
-            5,
-            77
-          ],
-          "gt_source_chunks": [],
           "relative_error": 0.0
         },
         "business_segments": {
@@ -478,17 +383,12 @@
             "Financial Services",
             "Asset Management"
           ],
-          "extracted_source_chunks": [
-            16,
-            1
-          ],
-          "gt_source_chunks": [],
-          "jaccard_similarity": 1.0,
-          "common_segments": [
-            "asset management",
-            "general insurance",
+          "jaccard": 1.0,
+          "common": [
             "life insurance & retirement services",
-            "financial services"
+            "general insurance",
+            "financial services",
+            "asset management"
           ]
         }
       }

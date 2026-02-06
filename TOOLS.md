@@ -91,7 +91,7 @@ This document lists all tools and libraries used in the RAG Ground Truth Pipelin
 ### pyyaml
 - **Purpose**: Parse YAML configuration files
 - **Used in**: `src/config_loader.py`
-- **What it does**: Loads `config/pipeline_config.yaml` into Python dictionaries
+- **What it does**: Loads `config/rag_config.yaml` into Python dictionaries
 
 ### json (stdlib)
 - **Purpose**: JSON parsing and serialization
@@ -135,11 +135,6 @@ This document lists all tools and libraries used in the RAG Ground Truth Pipelin
 - **Used in**: `src/main_pipeline_spark.py`, `run.py`
 - **What it does**: Provides timestamped log messages with severity levels
 
-### dataclasses
-- **Purpose**: Structured data containers
-- **Used in**: `src/main_pipeline_spark.py`
-- **What it does**: Defines `ComparisonResult` class for storing extraction comparisons
-
 ### datetime
 - **Purpose**: Timestamp generation
 - **Used in**: `src/main_pipeline_spark.py`
@@ -157,11 +152,11 @@ This document lists all tools and libraries used in the RAG Ground Truth Pipelin
 | File | Key Libraries |
 |------|---------------|
 | `run.py` | argparse, logging, sys |
-| `src/config_loader.py` | pyyaml, os |
+| `src/config_loader.py` | pyyaml |
 | `src/spark_preprocess_hf.py` | datasets, pyspark, pickle, re |
 | `src/spark_retriever.py` | pyspark.ml (RegexTokenizer, HashingTF, IDF, Pipeline) |
 | `src/llm_extractor.py` | groq, python-dotenv, json, time |
-| `src/main_pipeline_spark.py` | pyspark, pandas, logging, dataclasses |
+| `src/main_pipeline_spark.py` | pyspark, pandas, logging, datetime |
 
 ---
 

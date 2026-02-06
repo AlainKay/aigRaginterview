@@ -1,16 +1,5 @@
-"""
-Spark preprocessing for a single 10-K document loaded from Hugging Face.
-
-This module handles loading the AIG 2006 10-K filing from the Hugging Face
-edgar-corpus dataset, combining its sections, and creating a Spark DataFrame
-of text chunks for retrieval.
-
-Source dataset:
-    eloukas/edgar-corpus (config: year_2006)
-    https://huggingface.co/datasets/eloukas/edgar-corpus
-"""
-
-from typing import Dict, List, Any
+# Loads AIG 2006 10-K from HuggingFace, splits it into chunks,
+# and returns a Spark DataFrame ready for retrieval
 
 import os
 import re
@@ -18,53 +7,29 @@ import json
 import pickle
 from pathlib import Path
 
-from datasets import load_dataset, concatenate_datasets, Dataset
-from pyspark.sql import SparkSession, DataFrame
+from datasets import load_dataset, concatenate_datasets
+from pyspark.sql import SparkSession
 
-# Module-level cache for parsed AIG document
-_AIG_DOC_CACHE: Dict[str, Any] = {}
+# In-memory cache so we don't reload the document every time
+_AIG_DOC_CACHE = {}
 
 
-def split_into_chunks(
-    text: str,
-    chunk_size: int = 2000,
-    overlap: int = 200
-) -> List[Dict]:
-    """
-    Split text into overlapping chunks for retrieval indexing.
+def split_into_chunks(text, chunk_size=2000, overlap=200):
+    """Split text into overlapping chunks, breaking on section headers first."""
+    chunks = []
 
-    Uses a smart chunking strategy that:
-    1. First attempts to split on 10-K section headers (ITEM 1, ITEM 2, etc.)
-    2. For oversized sections, splits on sentence/paragraph boundaries
-    3. Maintains overlap between chunks for context preservation
-
-    Args:
-        text: Full document text to split.
-        chunk_size: Target maximum characters per chunk. Default 2000.
-        overlap: Characters to overlap between consecutive chunks. Default 200.
-
-    Returns:
-        List of chunk dictionaries, each containing:
-            - chunk_id (int): Sequential identifier starting at 0
-            - text (str): Chunk content
-            - char_start (int): Starting position in original document
-    """
-    chunks = []  # Will hold all chunk dictionaries
-
-    # STEP 1: Try to split by SEC 10-K section headers (e.g., "ITEM 1. BUSINESS")
-    # This regex captures lines like "ITEM 1A. RISK FACTORS"
+    # Split on 10-K section headers like "ITEM 1. BUSINESS"
     section_pattern = r'\n(ITEM\s+\d+[A-Z]?\.?\s*[A-Z][^\n]+)'
     sections = re.split(section_pattern, text, flags=re.IGNORECASE)
 
-    current_chunk = ""  # Buffer to accumulate text until it reaches chunk_size
-    chunk_id = 0  # Counter for unique chunk identifiers
+    current_chunk = ""
+    chunk_id = 0
 
-    # STEP 2: Process each section and build chunks
     for section in sections:
         if not section.strip():
-            continue  # Skip empty sections
+            continue
 
-        # If adding this section exceeds chunk_size, save current chunk and start new one
+        # If adding this section makes the chunk too big, save it and start fresh
         if len(current_chunk) + len(section) > chunk_size and current_chunk:
             chunks.append({
                 'chunk_id': chunk_id,
@@ -72,18 +37,17 @@ def split_into_chunks(
                 'char_start': sum(len(c['text']) for c in chunks),
             })
             chunk_id += 1
-            # Keep some overlap for context continuity between chunks
+            # Keep some overlap for context between chunks
             current_chunk = current_chunk[-overlap:] if len(current_chunk) > overlap else ""
 
-        current_chunk += section  # Add section to current chunk buffer
+        current_chunk += section
 
-        # STEP 3: If current chunk is too large, split it at natural break points
+        # If the chunk is still too big, break it at natural points
         while len(current_chunk) > chunk_size:
-            # Find the best break point (prefer paragraph > line > sentence > comma)
             break_point = chunk_size
-            for sep in ['\n\n', '\n', '. ', ', ']:  # Priority order of separators
-                pos = current_chunk.rfind(sep, 0, chunk_size)  # Search backwards
-                if pos > chunk_size // 2:  # Only use if at least halfway through
+            for sep in ['\n\n', '\n', '. ', ', ']:
+                pos = current_chunk.rfind(sep, 0, chunk_size)
+                if pos > chunk_size // 2:
                     break_point = pos + len(sep)
                     break
 
@@ -93,10 +57,9 @@ def split_into_chunks(
                 'char_start': sum(len(c['text']) for c in chunks),
             })
             chunk_id += 1
-            # Keep overlap from the end of saved chunk for context continuity
             current_chunk = current_chunk[break_point - overlap:]
 
-    # STEP 4: Save any remaining text as the final chunk
+    # Save whatever's left as the last chunk
     if current_chunk.strip():
         chunks.append({
             'chunk_id': chunk_id,
@@ -107,43 +70,15 @@ def split_into_chunks(
     return chunks
 
 
-def _normalize_cik(value: Any) -> str:
-    """
-    Normalize a CIK (Central Index Key) by stripping leading zeros.
-
-    SEC CIKs are 10-digit identifiers that may have leading zeros. This
-    function normalizes them for consistent comparison.
-
-    Args:
-        value: CIK value (string or integer), may be None.
-
-    Returns:
-        Normalized CIK string without leading zeros, or empty string if None.
-
-    Example:
-        >>> _normalize_cik("0000005272")
-        '5272'
-    """
+def _normalize_cik(value):
+    """Strip leading zeros from a CIK identifier (e.g. '0000005272' -> '5272')."""
     if value is None:
         return ""
     return str(value).lstrip("0")
 
 
-def _combine_sections(row: Dict) -> str:
-    """
-    Combine all 10-K section fields into a single text document.
-
-    SEC 10-K filings have standardized sections (Item 1-15). This function
-    concatenates all available sections with headers for downstream processing.
-
-    Args:
-        row: Dictionary from the HuggingFace dataset containing section_1
-             through section_15 fields.
-
-    Returns:
-        Single string with all sections concatenated, each prefixed with
-        its section name (e.g., "SECTION_1\\n<content>").
-    """
+def _combine_sections(row):
+    """Join all 10-K section fields into one big text string."""
     section_keys = [
         "section_1", "section_1A", "section_1B",
         "section_2", "section_3", "section_4",
@@ -154,7 +89,7 @@ def _combine_sections(row: Dict) -> str:
         "section_13", "section_14", "section_15",
     ]
 
-    parts: List[str] = []
+    parts = []
     for key in section_keys:
         value = row.get(key)
         if value:
@@ -162,20 +97,8 @@ def _combine_sections(row: Dict) -> str:
     return "\n\n".join(parts).strip()
 
 
-def _cached_file_for_url(cache_dir: str, url: str) -> str:
-    """
-    Find the local cached file path for a HuggingFace dataset URL.
-
-    HuggingFace datasets library caches downloaded files with metadata.
-    This function looks up the local path for a given remote URL.
-
-    Args:
-        cache_dir: Path to the HuggingFace cache directory.
-        url: Remote URL of the dataset file to find.
-
-    Returns:
-        Local file path if found, empty string otherwise.
-    """
+def _cached_file_for_url(cache_dir, url):
+    """Look up the local cached file for a HuggingFace download URL."""
     downloads_dir = Path(cache_dir) / "downloads"
     if not downloads_dir.exists():
         return ""
@@ -191,22 +114,8 @@ def _cached_file_for_url(cache_dir: str, url: str) -> str:
     return ""
 
 
-def _load_hf_year_2006_jsonl(cache_dir: str) -> Dataset:
-    """
-    Load HuggingFace JSONL files for year 2006 from the local cache.
-
-    Loads train, validation, and test splits from cached JSONL files and
-    concatenates them into a single dataset.
-
-    Args:
-        cache_dir: Path to the directory containing cached HF downloads.
-
-    Returns:
-        Concatenated HuggingFace Dataset containing all 2006 filings.
-
-    Raises:
-        FileNotFoundError: If any required split file is not in the cache.
-    """
+def _load_hf_year_2006_jsonl(cache_dir):
+    """Load 2006 JSONL splits from the local HuggingFace cache."""
     urls = {
         "train": "https://huggingface.co/datasets/eloukas/edgar-corpus/resolve/main/2006/train.jsonl",
         "validation": "https://huggingface.co/datasets/eloukas/edgar-corpus/resolve/main/2006/validate.jsonl",
@@ -217,55 +126,33 @@ def _load_hf_year_2006_jsonl(cache_dir: str) -> Dataset:
     for split, url in urls.items():
         path = _cached_file_for_url(cache_dir, url)
         if not path:
-            raise FileNotFoundError(
-                f"Missing cached file for {split}. Expected HF download in {cache_dir}/downloads."
-            )
+            raise FileNotFoundError(f"Missing cached file for {split}. Expected in {cache_dir}/downloads.")
         data_files[split] = path
 
     ds_dict = load_dataset("json", data_files=data_files)
     return concatenate_datasets([ds_dict["train"], ds_dict["validation"], ds_dict["test"]])
 
 
-def load_aig_10k_2006(target_cik: str = "5272") -> Dict[str, Any]:
-    """
-    Load the AIG 2006 10-K filing from HuggingFace and combine sections.
-
-    Uses a two-level cache: in-memory for repeated calls within the same process,
-    and a pickle file on disk to skip JSONL parsing on subsequent runs.
-
-    Args:
-        target_cik: SEC Central Index Key for the company. Default "5272" is AIG.
-
-    Returns:
-        Dictionary containing:
-            - year (int): Filing year (2006)
-            - company (str): Company name
-            - cik (str): Central Index Key
-            - file_name (str): Original SEC filing filename
-            - text (str): Combined text from all sections
-
-    Raises:
-        ValueError: If no matching 10-K is found or sections are empty.
-    """
+def load_aig_10k_2006(target_cik="5272"):
+    """Load the AIG 2006 10-K from HuggingFace. Uses memory + disk cache."""
     global _AIG_DOC_CACHE
 
-    # CACHE LEVEL 1: Check in-memory cache (fastest, within same process)
+    # Check memory cache first
     if target_cik in _AIG_DOC_CACHE:
         return _AIG_DOC_CACHE[target_cik]
 
     cache_dir = os.path.join("data", "hf_cache")
     os.makedirs(cache_dir, exist_ok=True)
 
-    # CACHE LEVEL 2: Check disk cache (persists across runs, avoids re-parsing)
+    # Check disk cache (pickle file from a previous run)
     pickle_path = os.path.join(cache_dir, f"aig_10k_2006_{target_cik}.pkl")
     if os.path.exists(pickle_path):
         with open(pickle_path, "rb") as f:
             doc = pickle.load(f)
-        _AIG_DOC_CACHE[target_cik] = doc  # Also store in memory for future calls
+        _AIG_DOC_CACHE[target_cik] = doc
         return doc
 
-    # CACHE MISS: Download JSONL files from HuggingFace and parse
-    # Downloads train/validation/test splits (~1.5GB total) on first run
+    # Cache miss — download from HuggingFace
     print("  Downloading AIG 10-K from HuggingFace (first run only)...")
     from huggingface_hub import hf_hub_download
 
@@ -280,25 +167,20 @@ def load_aig_10k_2006(target_cik: str = "5272") -> Dict[str, Any]:
     }
     data_files = {}
     for split_name, filename in splits.items():
-        local_path = hf_hub_download(
+        data_files[split_name] = hf_hub_download(
             repo_id="eloukas/edgar-corpus",
             filename=filename,
             repo_type="dataset",
             cache_dir=cache_dir,
         )
-        data_files[split_name] = local_path
 
-    # Load and merge all splits
+    # Merge all splits and find the AIG filing
     ds_dict = load_dataset("json", data_files=data_files)
     merged = concatenate_datasets([ds_dict["train"], ds_dict["validation"], ds_dict["test"]])
 
     target_cik_norm = _normalize_cik(target_cik)
+    matches = merged.filter(lambda row: _normalize_cik(row.get("cik")) == target_cik_norm)
 
-    def _is_aig_10k(row):
-        cik = _normalize_cik(row.get("cik"))
-        return cik == target_cik_norm
-
-    matches = merged.filter(_is_aig_10k)
     if len(matches) == 0:
         raise ValueError("No matching AIG 10-K found in year_2006 dataset.")
 
@@ -315,55 +197,27 @@ def load_aig_10k_2006(target_cik: str = "5272") -> Dict[str, Any]:
         "text": text,
     }
 
-    # Save to both caches for future runs
+    # Save to disk cache and memory cache
     with open(pickle_path, "wb") as f:
-        pickle.dump(doc, f)  # Disk cache (persists across runs)
-    _AIG_DOC_CACHE[target_cik] = doc  # Memory cache (fast access within process)
+        pickle.dump(doc, f)
+    _AIG_DOC_CACHE[target_cik] = doc
 
     return doc
 
 
-def build_chunks_df_from_hf(
-    spark: SparkSession,
-    chunk_size: int = 2000,
-    overlap: int = 200
-) -> DataFrame:
-    """
-    Load AIG 10-K from HuggingFace and return a Spark DataFrame of chunks.
-
-    Combines document loading, text chunking, and Spark DataFrame creation
-    into a single convenient function for the pipeline.
-
-    Args:
-        spark: Active SparkSession instance.
-        chunk_size: Maximum characters per chunk. Default 2000.
-        overlap: Character overlap between consecutive chunks for context
-                 preservation. Default 200.
-
-    Returns:
-        Spark DataFrame with columns:
-            - year (int): Document year
-            - chunk_id (int): Sequential chunk identifier
-            - text (str): Chunk text content
-            - char_start (int): Starting character position in original doc
-
-    Example:
-        >>> spark = SparkSession.builder.appName("RAG").getOrCreate()
-        >>> chunks_df = build_chunks_df_from_hf(spark)
-        >>> chunks_df.count()  # e.g., 450 chunks
-    """
+def build_chunks_df_from_hf(spark, chunk_size=2000, overlap=200):
+    """Load AIG 10-K from HuggingFace, chunk it, and return a Spark DataFrame."""
     doc = load_aig_10k_2006()
     chunks = split_into_chunks(doc["text"], chunk_size=chunk_size, overlap=overlap)
 
-    rows = []
-    for c in chunks:
-        rows.append(
-            {
-                "year": int(doc["year"]),
-                "chunk_id": c["chunk_id"],
-                "text": c["text"],
-                "char_start": c.get("char_start", 0),
-            }
-        )
+    rows = [
+        {
+            "year": int(doc["year"]),
+            "chunk_id": c["chunk_id"],
+            "text": c["text"],
+            "char_start": c.get("char_start", 0),
+        }
+        for c in chunks
+    ]
 
     return spark.createDataFrame(rows)
